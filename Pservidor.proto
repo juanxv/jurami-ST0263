@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+service PeerService {
+    rpc GetFile(FileRequest) returns (FileResponse) {}
+    rpc CreateFile(FileCreateRequest) returns (FileCreateResponse) {}
+}
+
+message FileRequest {
+    string filename = 1;
+}
+
+message FileResponse {
+    string content = 1;
+}
+
+message FileCreateRequest {
+    string filename = 1;
+    string content = 2;
+}
+
+message FileCreateResponse {
+    bool success = 1;
+}
+
