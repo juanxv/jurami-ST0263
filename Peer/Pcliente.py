@@ -111,9 +111,11 @@ def main():
                 print("Invalid choice. Please enter a number between 2 and 6.")
         else:
             if choice == '1':
-                filename = input("Enter filename: ")
-                pserver_port = "localhost:" + input("Enter the port to get the files from: ")
+                filename = search_file
+                pserver_port = search_port #"localhost:" + input("Enter the port to get the files from: ")
                 grpc_response = grpc_get_file(filename, pserver_port)
+                files.append(grpc_response)
+                grpc_create_file(grpc_response)
                 print("gRPC server response:", grpc_response)
             elif choice == '3':
                 logout_response = rest_logout(user)
@@ -129,7 +131,7 @@ def main():
                 search_response = rest_search(filename)
                 if search_response:
                     search_file = search_response['filename']
-                breakpoint()
+                    search_port = search_response['port']
                 print("REST API search response:", search_response)
             elif choice == '6':
                 print("Exiting...")
