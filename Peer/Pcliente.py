@@ -8,6 +8,8 @@ import requests
 GRPC_SERVER_ADDRESS_local = 'localhost:' + '50051'
 
 files = []
+search_file = ""
+search_port = ""
 
 def generate_string():
     random_number = random.randint(1, 30)
@@ -54,7 +56,7 @@ def rest_logout(user):
 
 def rest_index(user, files):
     url = 'http://localhost:5000/index'
-    data = {'user': user, 'files': files}
+    data = {'user': user, 'files': files, 'port': GRPC_SERVER_ADDRESS_local}
     response = requests.post(url, json=data)
     return response.json()
 
@@ -62,13 +64,17 @@ def rest_search(filename):
     url = 'http://localhost:5000/search'
     params = {'filename': filename}
     response = requests.get(url, params=params)
-    return response.json()
+    if response.status_code == 200:
+        return response.json()
+    else: 
+        return False
 
 def main():
+    global GRPC_SERVER_ADDRESS_local
+    global search_file
     files = [generate_string() for _ in range(1, random.randint(2, 5))]
     logged = False 
     user = ""
-    global GRPC_SERVER_ADDRESS_local
     while True:
         print("\nOptions:")
         if not logged:
@@ -112,6 +118,7 @@ def main():
             elif choice == '3':
                 logout_response = rest_logout(user)
                 if logout_response.get('message') == 'Logout successful':
+                    grpc_set_user_port("logout")
                     logged = False
                 print("REST API logout response:", logout_response)
             elif choice == '4':
@@ -120,6 +127,9 @@ def main():
             elif choice == '5':
                 filename = input("Enter filename: ")
                 search_response = rest_search(filename)
+                if search_response:
+                    search_file = search_response['filename']
+                breakpoint()
                 print("REST API search response:", search_response)
             elif choice == '6':
                 print("Exiting...")

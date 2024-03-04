@@ -26,6 +26,9 @@ class PeerServiceServicer(Pservidor_pb2_grpc.PeerServiceServicer):
         if users == None:
             users = user
             return Pservidor_pb2.Response(success=True)
+        elif users == 'logout':
+            users = None
+            return Pservidor_pb2.Response(success=False)
         else:
             return Pservidor_pb2.Response(success=False)
         
